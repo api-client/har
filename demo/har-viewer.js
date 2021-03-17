@@ -13,6 +13,7 @@ class ComponentPage extends DemoPage {
     this.demoStates = ['Regular', 'Mulesoft'];
     this.renderViewControls = true;
     this.har = undefined;
+    // this.darkThemeActive = true;
 
     this.startupHar = new URL('har1.har', window.location.href).toString();
     // this.startupHar = new URL('har2.json', window.location.href).toString();

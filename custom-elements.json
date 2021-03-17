@@ -1,0 +1,29 @@
+{
+  "version": "experimental",
+  "tags": [
+    {
+      "name": "har-viewer",
+      "path": "./har-viewer.js",
+      "attributes": [
+        {
+          "name": "ignorePages",
+          "description": "When set it ignores pages matching and renders all requests in a single table.",
+          "type": "boolean"
+        }
+      ],
+      "properties": [
+        {
+          "name": "har",
+          "description": "The HAR object to render.",
+          "type": "Har"
+        },
+        {
+          "name": "ignorePages",
+          "attribute": "ignorePages",
+          "description": "When set it ignores pages matching and renders all requests in a single table.",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

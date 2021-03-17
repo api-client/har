@@ -58,7 +58,6 @@ export const responseSizeTemplate = Symbol('responseSizeTemplate');
 export const togglePage = Symbol('togglePage');
 export const pageClickHandler = Symbol('pageClickHandler');
 export const pageKeydownHandler = Symbol('pageKeydownHandler');
-export const computeAllTimes = Symbol('computeAllTimes');
 export const computeTotalTime = Symbol('computeTotalTime');
 export const computeVisualTimes = Symbol('computeVisualTimes');
 export const sumTimings = Symbol('sumTimings');
@@ -177,6 +176,7 @@ export class HarViewerElement extends LitElement {
     const { log } = har;
     const { pages, entries, } = log;
     if (!entries || !entries.length) {
+      this.requestUpdate();
       return;
     }
     const items = this[sortEntires](entries);
@@ -254,7 +254,7 @@ export class HarViewerElement extends LitElement {
     const [startEntry] = entries;
     const startTime = startEntry.timestamp;
     entries.forEach((entry) => {
-      const d = new Date(entry.startedDateTime);
+      const d = new Date(entry.timestamp);
       const visualTimings = this[computeVisualTimes](entry.timings, entry.timestamp - startTime, totalTime);
       const numType = /** @type {"numeric" | "2-digit"} */ ('numeric');
       const options = /** @type Intl.DateTimeFormatOptions */ ({
@@ -265,16 +265,13 @@ export class HarViewerElement extends LitElement {
       });
       const format = new Intl.DateTimeFormat(undefined, options);
       const requestTime = format.format(d);
-
       const format2 = new Intl.DateTimeFormat(undefined , {
         timeStyle: 'medium',
         dateStyle: 'medium',
       });
       const requestFormattedDate = format2.format(d);
-
       const requestSizes = this[computeEntrySizeInfo](entry.request);
       const responseSizes = this[computeEntrySizeInfo](entry.response);
-
       const item = /** @type RenderedEntry */ ({
         id: nextId++,
         requestTime,
@@ -321,9 +318,6 @@ export class HarViewerElement extends LitElement {
         result.bodyComputed = true;
       }
     }
-    if (headersSize < 0) {
-      headersSize = 0;
-    }
     if (bodySize < 0) {
       bodySize = 0;
     }
@@ -349,21 +343,6 @@ export class HarViewerElement extends LitElement {
   }
 
   /**
-   * Computes the total time of entries in a page (or all entries);
-   * @param {Entry[]} entries
-   * @returns {number} The sum of timings of all requests in the range. Because requests are concurrent, this is not the same as page times.
-   */
-  [computeAllTimes](entries) {
-    return entries.reduce((accumulator, item) => {
-      let { time=0 } = item;
-      if (time < 0) {
-        time = 0;
-      }
-      return time + accumulator;
-    }, 0);
-  }
-
-  /**
    * Computes the total time of page requests.
    * @param {Entry} first The earliest entry in the range
    * @param {Entry} last The latest entry in the range
@@ -377,44 +356,6 @@ export class HarViewerElement extends LitElement {
     const endTime = new Date(last.startedDateTime).getTime();
     const lastDuration = this[sumTimings](last.timings);
     return endTime - startTime + lastDuration;
-  }
-
-  /**
-   * A handler for the page label click to toggle the page entries.
-   * @param {Event} e
-   */
-  [pageClickHandler](e) {
-    const node = /** @type HTMLElement */ (e.target);
-    const id = node.dataset.page;
-    this[togglePage](id);
-  }
-
-  /**
-   * A handler for the page label keydown to toggle the page entries on space key.
-   * @param {KeyboardEvent} e
-   */
-  [pageKeydownHandler](e) {
-    if (e.code !== 'Space') {
-      return;
-    }
-    const node = /** @type HTMLElement */ (e.target);
-    const id = node.dataset.page;
-    this[togglePage](id);
-  }
-
-  /**
-   * Toggles the visibility of the page entries.
-   * @param {string} id The id of the page.
-   */
-  [togglePage](id) {
-    const allOpened = this[openedPagesValue];
-    const index = allOpened.indexOf(id);
-    if (index === -1) {
-      allOpened.push(id);
-    } else {
-      allOpened.splice(index, 1);
-    }
-    this.requestUpdate();
   }
 
   /**
@@ -492,6 +433,44 @@ export class HarViewerElement extends LitElement {
       result += timings.wait;
     }
     return result;
+  }
+
+  /**
+   * A handler for the page label click to toggle the page entries.
+   * @param {Event} e
+   */
+  [pageClickHandler](e) {
+    const node = /** @type HTMLElement */ (e.currentTarget);
+    const id = node.dataset.page;
+    this[togglePage](id);
+  }
+
+  /**
+   * A handler for the page label keydown to toggle the page entries on space key.
+   * @param {KeyboardEvent} e
+   */
+  [pageKeydownHandler](e) {
+    if (e.code !== 'Space') {
+      return;
+    }
+    const node = /** @type HTMLElement */ (e.target);
+    const id = node.dataset.page;
+    this[togglePage](id);
+  }
+
+  /**
+   * Toggles the visibility of the page entries.
+   * @param {string} id The id of the page.
+   */
+  [togglePage](id) {
+    const allOpened = this[openedPagesValue];
+    const index = allOpened.indexOf(id);
+    if (index === -1) {
+      allOpened.push(id);
+    } else {
+      allOpened.splice(index, 1);
+    }
+    this.requestUpdate();
   }
 
   /**
@@ -593,7 +572,12 @@ export class HarViewerElement extends LitElement {
    */
   [entriesTemplate](entries) {
     return html`
-    <anypoint-listbox @selected="${this[entrySelectionHandler]}" multi selectable="anypoint-icon-item">
+    <anypoint-listbox 
+      @selected="${this[entrySelectionHandler]}" 
+      multi 
+      selectable="anypoint-icon-item"
+      aria-label="Select a list item to see details"
+    >
       ${entries.map((item) => this[entryTemplate](item))}
     </anypoint-listbox>
     `;
@@ -724,7 +708,7 @@ export class HarViewerElement extends LitElement {
     return html`
     <section class="entry-details">
       ${this[entryDetailsTabsTemplate](entry, selectedTab)}
-      <div class="details-content">
+      <div class="details-content" tabindex="0">
       ${this[entryDetailsContentTemplate](entry, selectedTab)}
       </div>
     </section>

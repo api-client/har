@@ -29,7 +29,7 @@ export default css `
 .loading-time-label {
   display: block;
   margin-left: auto;
-  margin-right: 12px;
+  color: var(--har-viewer-page-time-color, inherit);
 }
 
 .response-size-label {
@@ -67,40 +67,40 @@ export default css `
 }
 
 .timing-entry.blocked {
-  background-color: #b4b4b4;
+  background-color: var(--har-timings-blocked-color, #b4b4b4);
 }
 
 .timing-entry.dns {
-  background-color: #f6f696;
+  background-color: var(--har-timings-dns-color, #f6f696);
 }
 
 .timing-entry.connect {
-  background-color: #ffc04c;
+  background-color: var(--har-timings-connect-color, #ffc04c);
 }
 
 .timing-entry.ssl {
-  background-color: #8787ff;
+  background-color: var(--har-timings-ssl-color, #8787ff);
 }
 
 .timing-entry.send {
-  background-color: #ff7f7f;
+  background-color: var(--har-timings-send-color, #ff7f7f);
 }
 
 .timing-entry.wait {
-  background-color: #2eac6c;
+  background-color: var(--har-timings-wait-color, #2eac6c);
 }
 
 .timing-entry.receive {
-  background-color: #00c0ff;
+  background-color: var(--har-timings-receive-color, #00c0ff);
 }
 
 .entry-item {
-  border-top: 1px rgba(0, 0, 0, 0.12) solid;
+  border-top: 1px var(--divider-color, rgba(0, 0, 0, 0.12)) solid;
   padding: 0 8px;
 }
 
 .entry-item:last-of-type {
-  border-bottom: 1px rgba(0, 0, 0, 0.12) solid;
+  border-bottom: 1px var(--divider-color, rgba(0, 0, 0, 0.12)) solid;
 }
 
 .entry-body {
@@ -111,6 +111,17 @@ export default css `
   display: flex;
   height: 56px;
   font-weight: 500;
+  align-items: center;
+  font-size: 1.2rem;
+  padding: 0 8px;
+  cursor: default;
+}
+
+.page-header .label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--har-viewer-page-color, inherit);
 }
 
 .entry-details {

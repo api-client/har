@@ -14,6 +14,20 @@ A module containing all logic and UIs related to HAR data processing in Advanced
 npm install --save @api-client/har
 ```
 
+### Visualizing HAR data
+
+```html
+<section>
+  <har-viewer></har-viewer>
+</section>
+
+<script type="module" src="@api-client/har/har-viewer.js"></script>
+<script>
+  const har = await getHarData();
+  document.body.querySelector('har-viewer').har = har;
+</script>
+```
+
 ### Transforming the request object
 
 To transform ARC request object into a HAR log, use the `HarTransformer` class.

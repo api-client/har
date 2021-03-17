@@ -1,7 +1,7 @@
 {
   "name": "@api-client/har",
   "description": "Everything related to HAR processing and visualizing in API Client.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "cc-by-4.0",
   "main": "index.js",
   "module": "index.js",
@@ -18,10 +18,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/advanced-rest-client/arc-har.git"
+    "url": "git://github.com/api-client/har.git"
   },
   "bugs": {
-    "url": "https://github.com/advanced-rest-client/arc-har/issues",
+    "url": "https://github.com/api-client/har/issues",
     "email": "arc@mulesoft.com"
   },
   "dependencies": {

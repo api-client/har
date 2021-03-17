@@ -2,7 +2,7 @@
   "name": "@api-client/har",
   "description": "Everything related to HAR processing and visualizing in API Client.",
   "version": "0.1.0",
-  "license": "CC BY 4.0",
+  "license": "cc-by-4.0",
   "main": "index.js",
   "module": "index.js",
   "keywords": [
